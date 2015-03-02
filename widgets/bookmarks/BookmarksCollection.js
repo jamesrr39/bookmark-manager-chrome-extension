@@ -1,7 +1,10 @@
 define([
-], function() {
+	"bookmarks/BookmarkModel"
+], function(BookmarkModel) {
+	"use strict";
 
 	return Backbone.Collection.extend({
+		model: BookmarkModel,
 		initialize: function() {
 			// mock
 			this.add([{

@@ -1,4 +1,7 @@
 body{
-	width: 350px;
-	height: 350px;
+	width: 600px;
+	height: 500px;
+}
+.filter{
+	min-width: 250px;
 }

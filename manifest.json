@@ -13,5 +13,8 @@
 		},
 		"default_title": "Bookmark manager",
 		"default_popup": "index.html"
-	}
+	},
+	"permissions": [
+		"tabs"
+	]
 }

@@ -1,9 +1,16 @@
 define([
-	"bookmarks/BookmarksCollection"
-], function(BookmarksCollection) {
+	"bookmarks/BookmarksCollection",
+	"bookmarks/BookmarksListView"
+], function(BookmarksCollection, BookmarksListView) {
 	"use strict";
 	
-	var bookmarksCollection = new BookmarksCollection();
+	window.app = window.app || {};
+	window.app.bookmarksCollection = new BookmarksCollection();
 	
-	$("#content").text(bookmarksCollection.toJSON());
+	var $contentContainer = $("#content"),
+	bookmarkListView = new BookmarksListView({
+		el: $contentContainer
+	});
+	bookmarkListView.render();
+	
 });
