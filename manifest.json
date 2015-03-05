@@ -15,6 +15,7 @@
 		"default_popup": "index.html"
 	},
 	"permissions": [
-		"tabs"
+		"tabs",
+		"storage"
 	]
 }

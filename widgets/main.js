@@ -6,11 +6,16 @@ define([
 	
 	window.app = window.app || {};
 	window.app.bookmarksCollection = new BookmarksCollection();
-	
-	var $contentContainer = $("#content"),
-	bookmarkListView = new BookmarksListView({
-		el: $contentContainer
+	window.app.bookmarksCollection.fetch({
+		success: function(){
+			
+			var $contentContainer = $("#content"),
+			bookmarkListView = new BookmarksListView({
+				el: $contentContainer
+			});
+			bookmarkListView.render();
+		}
 	});
-	bookmarkListView.render();
+	
 	
 });

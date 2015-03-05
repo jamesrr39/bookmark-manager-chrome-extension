@@ -6,16 +6,28 @@ define([
 	return Backbone.Collection.extend({
 		model: BookmarkModel,
 		initialize: function() {
-			// mock
-			this.add([{
-					url: "http://example.com",
-					title: "example site",
-					labels: ["example", "not a real site"]
-				}, {
-					url: "http://jr39.net",
-					title: "jr39",
-					labels: ["domain example"]
-				}]);
+			var self = this;
+			
+			this.on("add change remove", function(model){
+				self.save();
+			});
+		},
+		fetch: function(options){
+			var self = this;
+			chrome.storage.local.get("bookmarks", function(result){
+				self.add(result.bookmarks, {
+					silent: true
+				});
+				if(options && _.isFunction(options.success)){
+					options.success(result);
+				}
+			});
+
+		},
+		save: function(){
+			chrome.storage.local.set({"bookmarks": this.toJSON()}, function(){
+				console.log("successfully saved");
+			});
 		}
 	});
 });

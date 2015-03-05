@@ -40,7 +40,7 @@ define([
 		addBookmark: function(){
 			chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
 				var tab = tabs[0];
-				window.app.bookmarksCollection.create({
+				window.app.bookmarksCollection.add({
 					url: tab.url,
 					title: tab.title,
 					labels: [
