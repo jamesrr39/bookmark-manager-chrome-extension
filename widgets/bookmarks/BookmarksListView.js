@@ -1,19 +1,38 @@
 define([
 	"text!bookmarks/bookmarksListTemplate.html",
+	"text!bookmarks/bookmarkGridRowTemplate.html",
 	"backboneGrid/BackboneGridView"
-], function(bookmarksListTemplate, BackboneGridView) {
+], function(bookmarksListTemplate, bookmarkGridRowTemplate, BackboneGridView) {
 	"use strict";
 	
 	return Backbone.View.extend({
 		events: {
 			"click .add-bookmark": "addBookmark",
-			"keydown .filter": "filter"
+			"keydown .filter": "filter",
+			"click .openTab": "openTab"
 		},
 		initialize: function(){
 			var self = this;
 			
 			this.bookmarksGrid = new BackboneGridView({
-				collection: window.app.bookmarksCollection
+				rowTemplate: bookmarkGridRowTemplate,
+				collection: window.app.bookmarksCollection,
+				getHeadings: function(){
+					return [
+						"Page",
+						"Labels"
+					];
+				},
+				getData: function(models){
+					return _.map(models, function(model){
+						return {
+							id: model.id,
+							url: model.get("url"),
+							title: model.get("title"),
+							labels: model.get("labels").join(", ")
+						};
+					});
+				}
 			});
 		},
 		render: function(){
@@ -53,6 +72,12 @@ define([
 		filter: function(event){
 			var $target;
 			this.bookmarksGrid.filter
+		},
+		openTab: function(event){
+			var $target = $(event.target);
+			chrome.tabs.create({
+				url: $target.attr("href")
+			});
 		}
 	});
 });
