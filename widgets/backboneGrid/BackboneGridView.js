@@ -10,15 +10,30 @@ define([
 		events: {
 			"keyup .filter": "filter"
 		},
+		defaults: function(){
+			var self = this;
+			
+			return {
+				sortBy: function(){
+					return self.collection.sortBy(self.collection.model.idAttribute);
+				},
+				getModelData: function(model){
+					return _.extend(model.toJSON(), {
+						id: model.id
+					});
+				}
+			};
+		},
 		initialize: function(options) {
 			options = options || {};
+			this.options = _.extend(this.defaults(), options);
 			this.getHeadings = _.isFunction(options.getHeadings) ? options.getHeadings : this.getHeadings;
 			this.getData = _.isFunction(options.getData) ? options.getData : this.getData;
 			this.rowTemplate = options.rowTemplate ? options.rowTemplate : this.rowTemplate;
 			this.allowDelete = options.allowDelete ? options.allowDelete : this.allowDelete;
 			
 			this.collection.on("add", function(model) {
-				this.addRow(model);
+				this.renderRows();
 			}, this);
 			this.collection.on("remove", function(model) {
 				this.removeRow(model.id);
@@ -31,25 +46,23 @@ define([
 			this.$el.html(Mustache.render(this.gridTemplate, {
 				headings: dataHeadings.concat(commandHeadings)
 			}));
-			_.each(this.collection.models, function(dataRecord){
-				self.addRow(dataRecord);	
-			});
 			
+			this.renderRows();
 		},
-		addRow: function(models) {
-			var self = this;
-			
-			if(!_.isArray(models)){
-				models = [
-					models
-				];
-			}
-			_.each(this.getData(models), function(dataRecord){
-				var deleteBtnHtml = "<td><button class='btn btn-default delete'>Delete</button></td>",
-					rowHtml = Mustache.render(self.rowTemplate, dataRecord);
-				rowHtml = $(rowHtml).append(deleteBtnHtml);
-				self.$("tbody").append(rowHtml);
+		renderRows: function(){
+			var self = this,
+					html = [];
+			_.each(this.getData(this.collection), function(data){
+				html.push(self.getRowHtml(data));
 			});
+			this.$("tbody").html(html.join(""));
+		},
+		getRowHtml: function(data) {
+			var self = this,
+				deleteBtnHtml = "<td><button class='btn btn-default delete'>Delete</button></td>",
+				rowHtml = Mustache.render(self.rowTemplate, data),
+				$rowHtml = $(rowHtml).append(deleteBtnHtml);
+			return $rowHtml[0].outerHTML;
 		},
 		removeRow: function(id) {
 			this.$("tr[data-id='" + id + "']").remove();
