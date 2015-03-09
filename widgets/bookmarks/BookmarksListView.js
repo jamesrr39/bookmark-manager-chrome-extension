@@ -4,39 +4,55 @@ define([
 	"backboneGrid/BackboneGridView"
 ], function(bookmarksListTemplate, bookmarkGridRowTemplate, BackboneGridView) {
 	"use strict";
-	
+
 	return Backbone.View.extend({
 		events: {
 			"click .add-bookmark": "addBookmark",
 			"keydown .filter": "filter",
-			"click .openTab": "openTab"
+			"click .openTab": "openTab",
+			"click [name='showArchived']": "toggleShowArchived"
 		},
 		initialize: function(){
 			var self = this;
-			
+
 			this.bookmarksGrid = new BackboneGridView({
 				rowTemplate: bookmarkGridRowTemplate,
 				collection: window.app.bookmarksCollection,
 				getHeadings: function(){
 					return [
 						"Page",
-						"Click Throughs"
+						"Click Throughs",
+						"" // archive
 					];
 				},
 				getData: function(collection){
+					var self = this; // BackboneGridView
 					return collection.sortBy(function(model){
-								return 1/model.get("clickThroughs");
-							})
-							.map(function(model){
-								return {
-									id: model.id,
-									url: model.get("url"),
-									title: model.get("title"),
-									clickThroughs: model.get("clickThroughs")
-								};
-							});
+							return 1/model.get("clickThroughs");
+						})
+						.filter(function(model){
+							return self.showArchived ? true : (model.get("archived") === false);
+						})
+						.map(function(model){
+							var rowClasses = [];
+							if(model.get("archived")){
+								rowClasses.push("archived");
+							}
+							return {
+								id: model.id,
+								url: model.get("url"),
+								title: model.get("title"),
+								clickThroughs: model.get("clickThroughs"),
+								rowClass: rowClasses.join(" ")
+							};
+						});
 				}
 			});
+		},
+		toggleShowArchived: function(event){
+			var showArchived = event.target.checked;
+			this.bookmarksGrid.showArchived = showArchived;
+			this.bookmarksGrid.render();
 		},
 		render: function(){
 			this.$el.html(bookmarksListTemplate);
@@ -60,7 +76,7 @@ define([
 			var $target = $(event.target),
 					url = $target.closest("tr").attr("data-id"),
 					model = window.app.bookmarksCollection.get(url);
-			
+
 			model.set("clickThroughs", model.get("clickThroughs") + 1);
 			chrome.tabs.create({
 				url: $target.attr("href")

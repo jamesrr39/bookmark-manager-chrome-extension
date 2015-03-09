@@ -5,7 +5,8 @@ define([
 	return Backbone.Model.extend({
 		idAttribute: "url",
 		defaults: {
-			clickThroughs: 0
+			clickThroughs: 0,
+			archived: false
 		}
 	});
 });

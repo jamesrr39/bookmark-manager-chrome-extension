@@ -1,9 +1,11 @@
-<tr data-id="{{id}}">
+<tr data-id="{{id}}" class="{{ rowClass }}">
 	<td>
 		<a href="{{url}}" class="openTab">{{title}}</a>
 	</td>
 	<td>
 		{{clickThroughs}}
 	</td>
-	{{ commandsHtml }}
+	<td>
+		<button class="btn btn-default" data-bgv-action="archive">Archive</button>
+	</td>
 </tr>

@@ -8,11 +8,12 @@ define([
 		gridTemplate: BackboneGridTemplate,
 		rowTemplate: BackboneGridRowTemplate,
 		events: {
-			"keyup .filter": "filter"
+			"keyup .filter": "filter",
+			"click [data-bgv-action='archive']": "archive"
 		},
 		defaults: function(){
 			var self = this;
-			
+
 			return {
 				sortBy: function(){
 					return self.collection.sortBy(self.collection.model.idAttribute);
@@ -31,7 +32,7 @@ define([
 			this.getData = _.isFunction(options.getData) ? options.getData : this.getData;
 			this.rowTemplate = options.rowTemplate ? options.rowTemplate : this.rowTemplate;
 			this.allowDelete = options.allowDelete ? options.allowDelete : this.allowDelete;
-			
+
 			this.collection.on("add", function(model) {
 				this.renderRows();
 			}, this);
@@ -40,13 +41,10 @@ define([
 			}, this);
 		},
 		render: function() {
-			var self = this,
-					dataHeadings = self.getHeadings(),
-					commandHeadings = this.allowDelete ? ["delete"] : [];
+			var self = this;
 			this.$el.html(Mustache.render(this.gridTemplate, {
-				headings: dataHeadings.concat(commandHeadings)
+				headings: self.getHeadings()
 			}));
-			
 			this.renderRows();
 		},
 		renderRows: function(){
@@ -58,14 +56,14 @@ define([
 			this.$("tbody").html(html.join(""));
 		},
 		getRowHtml: function(data) {
-			var self = this,
-				deleteBtnHtml = "<td><button class='btn btn-default delete'>Delete</button></td>",
-				rowHtml = Mustache.render(self.rowTemplate, data),
-				$rowHtml = $(rowHtml).append(deleteBtnHtml);
-			return $rowHtml[0].outerHTML;
+			return Mustache.render(this.rowTemplate, data);
 		},
 		removeRow: function(id) {
 			this.$("tr[data-id='" + id + "']").remove();
+		},
+		archive: function(event){
+			var modelId = $(event.target).closest("tr").attr("data-id");
+			this.collection.get(modelId).set("archived", true);
 		},
 		filter: function() {
 			var self = this,
