@@ -1,5 +1,5 @@
 define([
-	"libs/mustache/0.8.1/mustache.min.js",
+	"libs/mustache/mustache.min.js",
 	"text!backboneGrid/BackboneGridRowTemplate.html",
 	"text!backboneGrid/BackboneGridTemplate.html"
 ], function(Mustache, BackboneGridRowTemplate, BackboneGridTemplate) {
