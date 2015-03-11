@@ -28,6 +28,7 @@
     "backbone": "~1.1.2",
     "underscore": "~1.8.2",
     "mustache": "~1.1.0",
-    "requirejs": "~2.1.16"
+    "requirejs": "~2.1.16",
+    "backbone-grid": "git@github.com:jamesrr39/backbone-grid.git"
   }
 }

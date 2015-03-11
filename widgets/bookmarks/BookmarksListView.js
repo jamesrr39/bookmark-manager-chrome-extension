@@ -1,7 +1,7 @@
 define([
 	"text!bookmarks/bookmarksListTemplate.html",
 	"text!bookmarks/bookmarkGridRowTemplate.html",
-	"backboneGrid/BackboneGridView"
+	"libs/backbone-grid/src/BackboneGridView"
 ], function(bookmarksListTemplate, bookmarkGridRowTemplate, BackboneGridView) {
 	"use strict";
 
