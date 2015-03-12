@@ -10,10 +10,15 @@ define([
 			"click .add-bookmark": "addBookmark",
 			"keydown .filter": "filter",
 			"click .openTab": "openTab",
-			"click [name='showArchived']": "toggleShowArchived"
+			"click [name='showArchived']": "toggleShowArchived",
+			"click .export": "export"
 		},
 		initialize: function(){
 			var self = this;
+
+			window.app.bookmarksCollection.on("add remove change", function(){
+				this.setExportHref();
+			}, this)
 
 			this.bookmarksGrid = new BackboneGridView({
 				rowTemplate: bookmarkGridRowTemplate,
@@ -58,6 +63,7 @@ define([
 			this.$el.html(bookmarksListTemplate);
 			this.bookmarksGrid.setElement(this.$(".bookmarksGrid")).render();
 			this.$(".bookmarkSelectorContainer .select2-container").click();
+			this.setExportHref();
 		},
 		addBookmark: function(){
 			chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
@@ -81,6 +87,10 @@ define([
 			chrome.tabs.create({
 				url: $target.attr("href")
 			});
+		},
+		setExportHref: function(){
+			var url = "data:text/plain;charset=utf-8," + encodeURIComponent(JSON.stringify(window.app.bookmarksCollection.toJSON()));
+			this.$(".export").attr("href", url);
 		}
 	});
 });

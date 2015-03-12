@@ -6,7 +6,7 @@ body{
 	min-width: 250px;
 }
 tr.archived{
-	background-color: grey;
+	background-color: #BBBBBB;
 }
 tr.archived .btn[data-bgv-action="archive"]{
 	display: none;
