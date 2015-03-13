@@ -30,6 +30,7 @@
     "mustache": "~1.1.0",
     "requirejs": "~2.1.16",
     "backbone-grid": "git@github.com:jamesrr39/backbone-grid.git",
-    "jgrowl": "~1.4.2"
+    "jgrowl": "~1.4.2",
+    "font-awesome": "~4.3.0"
   }
 }
