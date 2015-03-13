@@ -39,14 +39,18 @@ define([
 							return self.showArchived ? true : (model.get("archived") === false);
 						})
 						.map(function(model){
-							var rowClasses = [];
+							var rowClasses = [],
+								url = model.get("url"),
+								title = model.get("title");
 							if(model.get("archived")){
 								rowClasses.push("archived");
 							}
 							return {
 								id: model.id,
-								url: model.get("url"),
-								title: model.get("title"),
+								url: url,
+								trimmedUrl: (url.length < 80) ? url : url.substring(0, 80) + "...",
+								title: title,
+								trimmedTitle: (title.length < 160) ? title : title.substring(0, 160) + "...",
 								clickThroughs: model.get("clickThroughs"),
 								rowClass: rowClasses.join(" ")
 							};
