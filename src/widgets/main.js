@@ -8,21 +8,17 @@ requirejs.config({
 
 
 define([
-	"bookmarks/BookmarksCollection",
-	"bookmarks/BookmarksListView"
-], function(BookmarksCollection, BookmarksListView) {
+  "Router",
+	"bookmarks/BookmarksCollection"
+], function(Router, BookmarksCollection) {
 	"use strict";
 
 	window.app = window.app || {};
 	window.app.bookmarksCollection = new BookmarksCollection();
 	window.app.bookmarksCollection.fetch({
 		success: function(){
-
-			var $contentContainer = $("#content"),
-			bookmarkListView = new BookmarksListView({
-				el: $contentContainer
-			});
-			bookmarkListView.render();
+      var router = new Router();
+      Backbone.history.start();
 		}
 	});
 
