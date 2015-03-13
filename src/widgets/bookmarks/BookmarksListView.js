@@ -11,7 +11,7 @@ define([
 			"keydown .filter": "filter",
 			"click .openTab": "openTab",
 			"click [name='showArchived']": "toggleShowArchived",
-			"click .export": "export"
+			"click .importFromBrowser": "importFromBrowser"
 		},
 		initialize: function(){
 			var self = this;
@@ -91,6 +91,9 @@ define([
 		setExportHref: function(){
 			var url = "data:text/plain;charset=utf-8," + encodeURIComponent(JSON.stringify(window.app.bookmarksCollection.toJSON()));
 			this.$(".export").attr("href", url);
+		},
+		importFromBrowser: function(){
+			window.app.bookmarksCollection.importFromBrowser();
 		}
 	});
 });
