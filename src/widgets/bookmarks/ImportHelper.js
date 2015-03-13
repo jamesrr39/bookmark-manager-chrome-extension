@@ -4,6 +4,16 @@ define([
 	"use strict";
 
   return {
+    /**
+    * Flattens a bookmark structure from Chrome <code>bookmarks.getTree</code> API.
+    * Converts into a map with the following two keys:
+    * <ul>
+    * <li><code>bookmarks</code> list of all the bookmarks</li>
+    * <li><code>folders</code> list of the folders</li>
+    * </ul>
+    * @param {object|array} bookmarkSubTree Chrome <code>bookmarks.getTree</code> API callback passed-in parameter
+    * @returns {object} map with <code>bookmarks</code> and <code>folders</code> properties, both of which are lists.
+    */
     flatten: function(bookmarkSubTree){
       var bookmarks = [],
         folders = [];
@@ -16,7 +26,10 @@ define([
           folders.push(bookmarkSubTree);
           return flatten(bookmarkSubTree.children);
         } else {
-          bookmarks.push(bookmarkSubTree);
+          // don't accept bookmarklets
+          if(bookmarkSubTree.url.indexOf("javascript:") !== 0){
+            bookmarks.push(bookmarkSubTree);
+          }
         }
       })(bookmarkSubTree);
       return {
@@ -24,6 +37,14 @@ define([
         folders: folders
       };
     },
+    /**
+    * Takes a list of bookmarks and folders and returns a modified list of the bookmarks.
+    * Produces an additional property, <code>folders</code>, a list of names of folders the bookmark appears in.
+    * This is populated top to bottom, so the folder the bookmark is immeadiately in would be index 0, and it's folder would be at index 1, etc.
+    * @param {array} bookmarks list of Chrome bookmarks
+    * @param {array} folders list of folders
+    * @returns {array} list of bookmarks with a new <code>folders</code> property
+    */
     mergeFoldersIntoBookmarks: function(bookmarks, folders){
       return _.map(bookmarks, function(bookmark){
         var parentFolder,
