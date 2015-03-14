@@ -3,6 +3,12 @@
 		<a href="{{url}}" class="openTab">{{trimmedTitle}}</a>
 		<br />
 		<small>{{trimmedUrl}}</small>
+		<br />
+		{{#folders}}
+		<div class="folderLabel pull-left">
+			{{.}}
+		</div>
+		{{/folders}}
 	</td>
 	<td>
 		{{clickThroughs}}

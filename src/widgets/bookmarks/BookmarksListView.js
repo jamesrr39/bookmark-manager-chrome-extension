@@ -47,7 +47,8 @@ define([
 								title: title,
 								trimmedTitle: (title.length < 160) ? title : title.substring(0, 160) + "...",
 								clickThroughs: model.get("clickThroughs"),
-								rowClass: rowClasses.join(" ")
+								rowClass: rowClasses.join(" "),
+								folders: model.get("folders")
 							};
 						});
 				}
