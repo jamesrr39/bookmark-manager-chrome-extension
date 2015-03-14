@@ -18,15 +18,15 @@ define([
 	window.app.bookmarksCollection = new BookmarksCollection();
 	window.app.bookmarksCollection.fetch({
 		success: function(){
-      var bookmarksView = new BookmarksListView({
+      window.app.bookmarksView = new BookmarksListView({
         el: $("#bookmarksGrid")
       });
-      bookmarksView.render();
+      window.app.bookmarksView.render();
 
-      var settingsView = new SettingsView({
+      window.app.settingsView = new SettingsView({
         el: $("#settings")
       });
-      settingsView.render();
+      window.app.settingsView.render();
 		}
 	});
 });
