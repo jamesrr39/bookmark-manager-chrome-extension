@@ -8,19 +8,25 @@ requirejs.config({
 
 
 define([
-  "Router",
-	"bookmarks/BookmarksCollection"
-], function(Router, BookmarksCollection) {
+	"bookmarks/BookmarksCollection",
+  "settings/SettingsView",
+  "bookmarks/BookmarksListView"
+], function(BookmarksCollection, SettingsView, BookmarksListView) {
 	"use strict";
 
 	window.app = window.app || {};
 	window.app.bookmarksCollection = new BookmarksCollection();
 	window.app.bookmarksCollection.fetch({
 		success: function(){
-      var router = new Router();
-      Backbone.history.start();
+      var bookmarksView = new BookmarksListView({
+        el: $("#bookmarksGrid")
+      });
+      bookmarksView.render();
+
+      var settingsView = new SettingsView({
+        el: $("#settings")
+      });
+      settingsView.render();
 		}
 	});
-
-
 });

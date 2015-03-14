@@ -18,10 +18,7 @@ define([
       "*actions": "renderBookmarksGrid"
     },
     renderBookmarksGrid: function(){
-      contentView = new BookmarksListView({
-				el: $contentContainer
-			});
-      contentView.render();
+
     },
     renderSettings: function(){
       contentView = new SettingsView({
