@@ -1,6 +1,21 @@
-<div class="row">
-  <div class="col-md-12">
-    <button class="btn btn-default pull-right importFromBrowser" type="button">Import from browser</button>
-    <a class="btn btn-default pull-right export" href="data:text/plain;charset=utf-8,{{ exportData }}" download="bookmarks-export.txt">Export</a>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <fieldset>
+        <div class="heading">
+          <h3 class="title">Privacy</h3>
+        </div>
+        <label>
+          <input type="checkbox" name="recordClickThroughs" {{ recordClickThroughsCheckedAttr }}/>
+          Record Click Throughs on links for improved search learning
+        </label>
+      </fieldset>
+      <fieldset>
+        <h3 class="heading">Import/Export</h3>
+        <a href="#" class="importFromBrowser">Import my browser bookmarks</a>
+        <br />
+        <a class="export" download="bookmarks-export.txt">Download a copy of my bookmarks</a>
+      </fieldset>
+    </div>
   </div>
 </div>

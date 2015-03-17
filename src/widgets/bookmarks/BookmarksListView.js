@@ -82,7 +82,9 @@ define([
 					url = $target.closest("tr").attr("data-id"),
 					model = window.app.bookmarksCollection.get(url);
 
-			model.set("clickThroughs", model.get("clickThroughs") + 1);
+			if(window.app.settingsModel.get("recordClickThroughs") === true){
+				model.set("clickThroughs", model.get("clickThroughs") + 1);
+			}
 			chrome.tabs.create({
 				url: $target.attr("href")
 			});

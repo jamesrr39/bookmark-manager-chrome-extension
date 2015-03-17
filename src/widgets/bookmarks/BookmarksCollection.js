@@ -15,6 +15,8 @@ define([
 		},
 		fetch: function(options){
 			var self = this;
+
+			options = options || {};
 			chrome.storage.local.get("bookmarks", function(result){
 				self.add(result.bookmarks, {
 					silent: true
@@ -27,21 +29,29 @@ define([
 		},
 		save: function(){
 			chrome.storage.local.set({"bookmarks": this.toJSON()}, function(){
-				console.log("successfully saved");
+				$.jGrowl("Saved");
 			});
 		},
-		importFromBrowser: function(){
-			var self = this;
+		importFromBrowser: function(options){
+			var self = this,
+				startingBookmarksQty = window.app.bookmarksCollection.length;
+
+			options = options || {};
 			chrome.bookmarks.getTree(function(bookmarkTree){
 				// flatten
 				var list = ImportHelper.flatten(bookmarkTree),
-					mergedList = ImportHelper.mergeFoldersIntoBookmarks(list.bookmarks, list.folders);
-
+					mergedList = ImportHelper.mergeFoldersIntoBookmarks(list.bookmarks, list.folders),
+					importedBookmarksQty;
 
 				self.add(mergedList,{
 					silent: true
 				});
-				self.trigger("add");
+				importedBookmarksQty = window.app.bookmarksCollection.length - startingBookmarksQty;
+
+				if(options && _.isFunction(options.success)){
+					// todo send number of bookmarks imported, number of clashes, number of labels
+					options.success(list.bookmarks, list.folders, importedBookmarksQty);
+				}
 			})
 		}
 	});

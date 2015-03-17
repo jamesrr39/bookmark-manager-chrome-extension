@@ -10,14 +10,18 @@ requirejs.config({
 define([
 	"bookmarks/BookmarksCollection",
   "settings/SettingsView",
-  "bookmarks/BookmarksListView"
-], function(BookmarksCollection, SettingsView, BookmarksListView) {
+  "bookmarks/BookmarksListView",
+  "settings/SettingsModel"
+], function(BookmarksCollection, SettingsView, BookmarksListView, SettingsModel) {
 	"use strict";
 
-	window.app = window.app || {};
-	window.app.bookmarksCollection = new BookmarksCollection();
-	window.app.bookmarksCollection.fetch({
-		success: function(){
+  var bookmarksFetched = false,
+    settingsFetched = false,
+    loadUI = function(){
+      if(!bookmarksFetched || !settingsFetched){
+        return;
+      }
+
       window.app.bookmarksView = new BookmarksListView({
         el: $("#bookmarksGrid")
       });
@@ -27,6 +31,22 @@ define([
         el: $("#settings")
       });
       window.app.settingsView.render();
+    };
+
+	window.app = window.app || {};
+	window.app.bookmarksCollection = new BookmarksCollection();
+  window.app.settingsModel = new SettingsModel();
+
+	window.app.bookmarksCollection.fetch({
+		success: function(){
+      bookmarksFetched = true;
+      loadUI();
 		}
 	});
+  window.app.settingsModel.fetch({
+    success: function(){
+      settingsFetched = true;
+      loadUI();
+    }
+  })
 });
