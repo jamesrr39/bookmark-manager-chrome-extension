@@ -8,7 +8,7 @@ define([
 	return Backbone.View.extend({
 		events: {
 			"click .add-bookmark": "addBookmark",
-			"keydown .filter": "filter",
+			"keyup .search": "search",
 			"click .openTab": "openTab",
 			"click [name='showArchived']": "toggleShowArchived"
 		},
@@ -18,10 +18,14 @@ define([
 			this.bookmarksGrid = new BackboneGridView({
 				rowTemplate: bookmarkGridRowTemplate,
 				collection: window.app.bookmarksCollection,
+				calculateSearchScore: function(){
+					return 1;
+				},
 				getHeadings: function(){
 					return [
 						"Page",
 						"Click Throughs",
+						"Search Score",
 						"" // archive
 					];
 				},
@@ -48,7 +52,8 @@ define([
 								trimmedTitle: (title.length < 160) ? title : title.substring(0, 160) + "...",
 								clickThroughs: model.get("clickThroughs"),
 								rowClass: rowClasses.join(" "),
-								folders: model.get("folders")
+								folders: model.get("folders"),
+								searchScore: self.options.calculateSearchScore()
 							};
 						});
 				}
@@ -73,9 +78,12 @@ define([
 				});
 			});
 		},
-		filter: function(event){
-			var $target;
-			this.bookmarksGrid.filter
+		search: function(event){
+			var searchTerm = $(event.target).val();
+			this.bookmarksGrid.options.calculateSearchScore = function(){
+				return Math.random() + 0.5;
+			}
+			this.bookmarksGrid.renderRows();
 		},
 		openTab: function(event){
 			var $target = $(event.target),
