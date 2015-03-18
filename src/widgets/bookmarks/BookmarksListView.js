@@ -80,8 +80,18 @@ define([
 		},
 		search: function(event){
 			var searchTerm = $(event.target).val(),
+				searchTermFragments = searchTerm.split(" "),
 				searchTermContains = function(haystack){
-					return (searchTerm === "") ? false : (haystack.indexOf(searchTerm) > -1);
+					var index = 0,
+						fragment;
+					while(index < searchTermFragments.length){
+						fragment = searchTermFragments[index];
+						if(fragment !== "" && (haystack.indexOf(fragment)) > -1){
+							return true;
+						}
+						index++;
+					}
+					return false;
 				};
 
 			this.bookmarksGrid.options.calculateSearchScore = (searchTerm === "") ? function(){
