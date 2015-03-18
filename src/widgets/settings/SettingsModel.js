@@ -9,7 +9,8 @@ define([
 			}, this);
 		},
     defaults: {
-			recordClickThroughs: true
+			recordClickThroughs: true,
+			searchShowThreshold: 0.5
     },
 		fetch: function(options){
 			var self = this;

@@ -31,12 +31,7 @@ define([
 				},
 				getData: function(collection){
 					var self = this; // BackboneGridView
-					return collection.sortBy(function(model){
-							return 1/model.get("clickThroughs");
-						})
-						.filter(function(model){
-							return self.showArchived ? true : (model.get("archived") === false);
-						})
+					return _.sortBy(collection
 						.map(function(model){
 							var rowClasses = [],
 								url = model.get("url"),
@@ -53,8 +48,13 @@ define([
 								clickThroughs: model.get("clickThroughs"),
 								rowClass: rowClasses.join(" "),
 								folders: model.get("folders"),
-								searchScore: self.options.calculateSearchScore()
+								searchScore: self.options.calculateSearchScore(model.toJSON())
 							};
+						})
+						.filter(function(bookmark){
+							return (bookmark.searchScore >= window.app.settingsModel.get("searchShowThreshold"));
+						}), function(bookmark){
+							return 1/bookmark.searchScore;
 						});
 				}
 			});
@@ -79,9 +79,34 @@ define([
 			});
 		},
 		search: function(event){
-			var searchTerm = $(event.target).val();
-			this.bookmarksGrid.options.calculateSearchScore = function(){
-				return Math.random() + 0.5;
+			var searchTerm = $(event.target).val(),
+				searchTermContains = function(haystack){
+					return (searchTerm === "") ? false : (haystack.indexOf(searchTerm) > -1);
+				};
+
+			this.bookmarksGrid.options.calculateSearchScore = (searchTerm === "") ? function(){
+				return 1;
+			} : function(bookmark){
+				var score = 0,
+					weights = {
+						searchTermAppearsInURL: 1,
+						searchTermAppearsInTitle: 1.5,
+						previousClickThroughs: 0.1,
+						searchTermInFolder: 0.3
+					};
+
+				score = searchTermContains(bookmark.url) ? score + weights.searchTermAppearsInURL : score;
+				score = searchTermContains(bookmark.title) ? score + weights.searchTermAppearsInTitle : score;
+				score += weights.previousClickThroughs * bookmark.clickThroughs;
+				score += _.chain(bookmark.folders)
+					.map(function(folder){
+						return searchTermContains(folder) ? weights.searchTermInFolder : 0;
+					})
+					.reduce(function(cumulativeScore, thisScore){
+						return cumulativeScore + thisScore;
+					})
+					.value() || 0;
+				return score;
 			}
 			this.bookmarksGrid.renderRows();
 		},

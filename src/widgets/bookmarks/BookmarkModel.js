@@ -6,7 +6,8 @@ define([
 		idAttribute: "url",
 		defaults: {
 			clickThroughs: 0,
-			archived: false
+			archived: false,
+			folders: []
 		}
 	});
 });
