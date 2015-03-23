@@ -67,7 +67,7 @@ define([
 		render: function(){
 			this.$el.html(bookmarksListTemplate);
 			this.bookmarksGrid.setElement(this.$(".bookmarksGrid")).render();
-			this.$(".bookmarkSelectorContainer .select2-container").click();
+			this.$(".bookmarkSelectorContainer .select2-container").focus();
 		},
 		addBookmark: function(){
 			chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
@@ -80,37 +80,35 @@ define([
 		},
 		search: function(event){
 			var searchTerm = $(event.target).val(),
-				searchTermFragments = searchTerm.split(" "),
-				searchTermContains = function(haystack){
-					var index = 0,
-						fragment;
-					while(index < searchTermFragments.length){
+				searchTermFragments = _.map(searchTerm.split(" "), function(fragment){
+					return fragment.toLowerCase();
+				}),
+				getSearchTermOcurrencesInHaystack = function(haystack){
+					var occurences = 0,
+						fragment,
+						lowerCaseHaystack = haystack.toLowerCase();
+
+					for(var index = 0; index < searchTermFragments.length; index++){
 						fragment = searchTermFragments[index];
-						if(fragment !== "" && (haystack.indexOf(fragment)) > -1){
-							return true;
+						if(fragment !== ""){
+							occurences += lowerCaseHaystack.split(fragment).length -1;
 						}
-						index++;
 					}
-					return false;
+					return occurences;
 				};
 
 			this.bookmarksGrid.options.calculateSearchScore = (searchTerm === "") ? function(){
 				return 1;
 			} : function(bookmark){
 				var score = 0,
-					weights = {
-						searchTermAppearsInURL: 1,
-						searchTermAppearsInTitle: 1.5,
-						previousClickThroughs: 0.1,
-						searchTermInFolder: 0.3
-					};
+					weights = window.app.settingsModel.toJSON(); // todo separate search model
 
-				score = searchTermContains(bookmark.url) ? score + weights.searchTermAppearsInURL : score;
-				score = searchTermContains(bookmark.title) ? score + weights.searchTermAppearsInTitle : score;
+				score += getSearchTermOcurrencesInHaystack(bookmark.url) * weights.searchTermAppearsInURLOccurence;
+				score += getSearchTermOcurrencesInHaystack(bookmark.title) * weights.searchTermAppearsInTitleOccurence;
 				score += weights.previousClickThroughs * bookmark.clickThroughs;
 				score += _.chain(bookmark.folders)
 					.map(function(folder){
-						return searchTermContains(folder) ? weights.searchTermInFolder : 0;
+						return getSearchTermOcurrencesInHaystack(folder) * weights.searchTermInFolder;
 					})
 					.reduce(function(cumulativeScore, thisScore){
 						return cumulativeScore + thisScore;

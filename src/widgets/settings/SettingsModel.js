@@ -10,7 +10,11 @@ define([
 		},
     defaults: {
 			recordClickThroughs: true,
-			searchShowThreshold: 0.5
+			searchShowThreshold: 0.5,
+			searchTermAppearsInURLOccurence: 1,
+			searchTermAppearsInTitleOccurence: 1.5,
+			previousClickThroughs: 0.1,
+			searchTermInFolder: 0.3
     },
 		fetch: function(options){
 			var self = this;
