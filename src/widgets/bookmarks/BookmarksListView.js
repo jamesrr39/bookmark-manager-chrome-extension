@@ -1,8 +1,9 @@
 define([
 	"text!bookmarks/bookmarksListTemplate.html",
 	"text!bookmarks/bookmarkGridRowTemplate.html",
-	"libs/backbone-grid/src/BackboneGridView"
-], function(bookmarksListTemplate, bookmarkGridRowTemplate, BackboneGridView) {
+	"libs/backbone-grid/src/BackboneGridView",
+	"search/FuzzySearch"
+], function(bookmarksListTemplate, bookmarkGridRowTemplate, BackboneGridView, FuzzySearch) {
 	"use strict";
 
 	return Backbone.View.extend({
@@ -80,42 +81,12 @@ define([
 		},
 		search: function(event){
 			var searchTerm = $(event.target).val(),
-				searchTermFragments = _.map(searchTerm.split(" "), function(fragment){
-					return fragment.toLowerCase();
-				}),
-				getSearchTermOcurrencesInHaystack = function(haystack){
-					var occurences = 0,
-						fragment,
-						lowerCaseHaystack = haystack.toLowerCase();
+				searchAlgorithm = FuzzySearch;
 
-					for(var index = 0; index < searchTermFragments.length; index++){
-						fragment = searchTermFragments[index];
-						if(fragment !== ""){
-							occurences += lowerCaseHaystack.split(fragment).length -1;
-						}
-					}
-					return occurences;
-				};
-
-			this.bookmarksGrid.options.calculateSearchScore = (searchTerm === "") ? function(){
-				return 1;
-			} : function(bookmark){
-				var score = 0,
-					weights = window.app.settingsModel.toJSON(); // todo separate search model
-
-				score += getSearchTermOcurrencesInHaystack(bookmark.url) * weights.searchTermAppearsInURLOccurence;
-				score += getSearchTermOcurrencesInHaystack(bookmark.title) * weights.searchTermAppearsInTitleOccurence;
-				score += weights.previousClickThroughs * bookmark.clickThroughs;
-				score += _.chain(bookmark.folders)
-					.map(function(folder){
-						return getSearchTermOcurrencesInHaystack(folder) * weights.searchTermInFolder;
-					})
-					.reduce(function(cumulativeScore, thisScore){
-						return cumulativeScore + thisScore;
-					})
-					.value() || 0;
-				return score;
+			this.bookmarksGrid.options.calculateSearchScore = function(bookmark){
+	      return (searchTerm === "") ? 1 : searchAlgorithm.calculateScore(searchTerm, bookmark);
 			}
+
 			this.bookmarksGrid.renderRows();
 		},
 		openTab: function(event){
