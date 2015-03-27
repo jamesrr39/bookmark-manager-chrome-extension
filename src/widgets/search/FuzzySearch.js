@@ -4,28 +4,49 @@ define([
 
   return {
     calculateScore: function(searchTerm, bookmark){
-      var searchTermFragments = _.map(searchTerm.split(" "), function(fragment){
-        return fragment.toLowerCase();
-      }),
-      getSearchTermOcurrencesInHaystack = function(haystack){
-        var occurences = 0,
-          fragment,
-          lowerCaseHaystack = haystack.toLowerCase();
+      var weights = window.app.settingsModel.toJSON(), // todo separate search model
+				searchTermFragments = _.map(searchTerm.split(" "), function(fragment){
+					return fragment.toLowerCase();
+				}),
+				getURLScore = function(url){
+					var score = 0,
+						urlFragments = url.split(/\.|\//g);
 
-        for(var index = 0; index < searchTermFragments.length; index++){
-          fragment = searchTermFragments[index];
-          if(fragment !== ""){
-            occurences += lowerCaseHaystack.split(fragment).length -1;
-          }
-        }
-        return occurences;
-      };
+					return _.chain(searchTermFragments)
+						.map(function(searchTermFragment){
+							return _.chain(urlFragments)
+								.map(function(urlFragment){
+									var indexOfFragment = urlFragment.indexOf(searchTermFragment);
+									return (indexOfFragment === -1) ? 0 : (((urlFragment.length - (indexOfFragment + 1)) / urlFragment.length) * weights.searchTermAppearsInURLOccurence);
+								})
+								.reduce(function(cumulativeFragmentScore, urlFragmentScore){
+									return cumulativeFragmentScore + urlFragmentScore;
+								})
+								.value();
+						})
+						.reduce(function(cumulativeScore, searchTermFragmentScore){
+							return cumulativeScore + searchTermFragmentScore;
+						})
+						.value();
+				},
+	      getSearchTermOcurrencesInHaystack = function(haystack){
+	        var occurences = 0,
+	          fragment,
+	          lowerCaseHaystack = haystack.toLowerCase();
+
+	        for(var index = 0; index < searchTermFragments.length; index++){
+	          fragment = searchTermFragments[index];
+	          if(fragment !== ""){
+	            occurences += lowerCaseHaystack.split(fragment).length -1;
+	          }
+	        }
+	        return occurences;
+	      };
 
       return (function(bookmark){
-        var score = 0,
-          weights = window.app.settingsModel.toJSON(); // todo separate search model
+        var score = 0;
 
-        score += getSearchTermOcurrencesInHaystack(bookmark.url) * weights.searchTermAppearsInURLOccurence;
+        score += getURLScore(bookmark.url);
         score += getSearchTermOcurrencesInHaystack(bookmark.title) * weights.searchTermAppearsInTitleOccurence;
         score += weights.previousClickThroughs * bookmark.clickThroughs;
         score += _.chain(bookmark.folders)
