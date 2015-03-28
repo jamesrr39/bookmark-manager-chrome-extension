@@ -1,0 +1,14 @@
+{
+  "name": "bookmark-manager-chrome-extension",
+  "description": "bookmark manager extension",
+  "version": "0.0.1",
+  "private": true,
+  "author": {
+    "name": "jr39.dev@gmail.com"
+  },
+  "repository": "jamesrr39/bookmark-manager-chrome-extension",
+  "devDependencies": {
+    "grunt-contrib-jshint": "^0.11.1",
+    "grunt-jsbeautifier": "^0.2.10"
+  }
+}

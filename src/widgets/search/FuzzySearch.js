@@ -4,13 +4,14 @@ define([
 
   return {
     calculateScore: function(searchTerm, bookmark){
+			searchTerm = searchTerm.trim();
       var weights = window.app.settingsModel.toJSON(), // todo separate search model
 				searchTermFragments = _.map(searchTerm.split(" "), function(fragment){
 					return fragment.toLowerCase();
 				}),
 				getURLScore = function(url){
 					var score = 0,
-						urlFragments = url.split(/\.|\//g);
+						urlFragments = url.split("//")[1].split(/\.|\//g);
 
 					return _.chain(searchTermFragments)
 						.map(function(searchTermFragment){
