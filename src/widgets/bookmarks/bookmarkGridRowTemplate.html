@@ -1,19 +1,21 @@
 <tr data-id="{{id}}" class="{{ rowClass }}">
 	<td>
-		<a href="{{url}}" class="openTab">{{trimmedTitle}}</a>
-		<br />
-		<small>{{trimmedUrl}}</small>
-		<br />
-		{{#folders}}
-		<div class="folderLabel pull-left">
-			{{.}}
+		<div>
+			<a href="{{url}}" class="openTab">{{trimmedTitle}}</a>
+			<br />
+			<small>{{trimmedUrl}}</small>
+			<br />
+			{{#folders}}
+			<div class="folderLabel pull-left">
+				{{.}}
+			</div>
+			{{/folders}}
+			<div>
 		</div>
-		{{/folders}}
-	</td>
-	<td>
-		{{clickThroughs}}
-	</td>
-	<td>
-		{{searchScore}}
+			
+		<div class="debug pull-right">
+			{{clickThroughs}}
+			{{searchScore}}
+		</div>
 	</td>
 </tr>

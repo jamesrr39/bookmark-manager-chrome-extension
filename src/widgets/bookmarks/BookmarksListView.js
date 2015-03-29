@@ -21,9 +21,6 @@ define([
 				},
 				getHeadings: function() {
 					return [
-						"Page",
-						"Click Throughs",
-						"Search Score"
 					];
 				},
 				getData: function(collection) {
