@@ -10,8 +10,7 @@ define([
 		events: {
 			"click .add-bookmark": "addBookmark",
 			"keyup .search": "search",
-			"click .openTab": "openTab",
-			"click [name='showArchived']": "toggleShowArchived"
+			"click .openTab": "openTab"
 		},
 		initialize: function() {
 			this.bookmarksGrid = new BackboneGridView({
@@ -24,8 +23,7 @@ define([
 					return [
 						"Page",
 						"Click Throughs",
-						"Search Score",
-						"" // archive
+						"Search Score"
 					];
 				},
 				getData: function(collection) {
@@ -35,9 +33,6 @@ define([
 							var rowClasses = [],
 								url = model.get("url"),
 								title = model.get("title");
-							if (model.get("archived")) {
-								rowClasses.push("archived");
-							}
 							return {
 								id: model.id,
 								url: url,
@@ -58,11 +53,6 @@ define([
 						});
 				}
 			});
-		},
-		toggleShowArchived: function(event) {
-			var showArchived = event.target.checked;
-			this.bookmarksGrid.showArchived = showArchived;
-			this.bookmarksGrid.render();
 		},
 		render: function() {
 			this.$el.html(bookmarksListTemplate);

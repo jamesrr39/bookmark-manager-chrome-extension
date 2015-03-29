@@ -5,7 +5,6 @@ define([], function() {
 		idAttribute: "url",
 		defaults: {
 			clickThroughs: 0,
-			archived: false,
 			folders: []
 		}
 	});
