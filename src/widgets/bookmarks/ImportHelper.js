@@ -1,6 +1,6 @@
+/*jshint scripturl:true*/
 define([
-	"bookmarks/BookmarkModel"
-], function(BookmarkModel) {
+], function() {
 	"use strict";
 
 	return {
@@ -60,12 +60,12 @@ define([
 						}
 						setFolders(parentFolder);
 					}
-				})(bookmark)
+				})(bookmark);
 
 				return _.extend(bookmark, {
 					folders: parentFolders
 				});
-			})
+			});
 		}
 	};
 

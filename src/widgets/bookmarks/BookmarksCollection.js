@@ -54,7 +54,7 @@ define([
 					// todo send number of bookmarks imported, number of clashes, number of labels
 					options.success(list.bookmarks, list.folders, importedBookmarksQty);
 				}
-			})
+			});
 		}
 	});
 });

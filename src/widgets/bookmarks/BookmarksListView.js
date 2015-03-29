@@ -14,8 +14,6 @@ define([
 			"click [name='showArchived']": "toggleShowArchived"
 		},
 		initialize: function() {
-			var self = this;
-
 			this.bookmarksGrid = new BackboneGridView({
 				rowTemplate: bookmarkGridRowTemplate,
 				collection: window.app.bookmarksCollection,
@@ -89,7 +87,7 @@ define([
 
 			this.bookmarksGrid.options.calculateSearchScore = function(bookmark) {
 				return (searchTerm === "") ? 1 : searchAlgorithm.calculateScore(searchTerm, bookmark);
-			}
+			};
 
 			this.bookmarksGrid.renderRows();
 		},
