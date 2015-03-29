@@ -13,16 +13,16 @@ define([
 			"click .openTab": "openTab",
 			"click [name='showArchived']": "toggleShowArchived"
 		},
-		initialize: function(){
+		initialize: function() {
 			var self = this;
 
 			this.bookmarksGrid = new BackboneGridView({
 				rowTemplate: bookmarkGridRowTemplate,
 				collection: window.app.bookmarksCollection,
-				calculateSearchScore: function(){
+				calculateSearchScore: function() {
 					return 1;
 				},
-				getHeadings: function(){
+				getHeadings: function() {
 					return [
 						"Page",
 						"Click Throughs",
@@ -30,14 +30,14 @@ define([
 						"" // archive
 					];
 				},
-				getData: function(collection){
+				getData: function(collection) {
 					var self = this; // BackboneGridView
 					return _.sortBy(collection
-						.map(function(model){
+						.map(function(model) {
 							var rowClasses = [],
 								url = model.get("url"),
 								title = model.get("title");
-							if(model.get("archived")){
+							if (model.get("archived")) {
 								rowClasses.push("archived");
 							}
 							return {
@@ -52,26 +52,30 @@ define([
 								searchScore: self.options.calculateSearchScore(model.toJSON())
 							};
 						})
-						.filter(function(bookmark){
+						.filter(function(bookmark) {
 							return (bookmark.searchScore >= window.app.settingsModel.get("searchShowThreshold"));
-						}), function(bookmark){
-							return 1/bookmark.searchScore;
+						}),
+						function(bookmark) {
+							return 1 / bookmark.searchScore;
 						});
 				}
 			});
 		},
-		toggleShowArchived: function(event){
+		toggleShowArchived: function(event) {
 			var showArchived = event.target.checked;
 			this.bookmarksGrid.showArchived = showArchived;
 			this.bookmarksGrid.render();
 		},
-		render: function(){
+		render: function() {
 			this.$el.html(bookmarksListTemplate);
 			this.bookmarksGrid.setElement(this.$(".bookmarksGrid")).render();
 			this.$(".bookmarkSelectorContainer .select2-container").focus();
 		},
-		addBookmark: function(){
-			chrome.tabs.query({active: true, lastFocusedWindow: true}, function (tabs) {
+		addBookmark: function() {
+			chrome.tabs.query({
+				active: true,
+				lastFocusedWindow: true
+			}, function(tabs) {
 				var tab = tabs[0];
 				window.app.bookmarksCollection.add({
 					url: tab.url,
@@ -79,22 +83,22 @@ define([
 				});
 			});
 		},
-		search: function(event){
+		search: function(event) {
 			var searchTerm = $(event.target).val(),
 				searchAlgorithm = FuzzySearch;
 
-			this.bookmarksGrid.options.calculateSearchScore = function(bookmark){
-	      return (searchTerm === "") ? 1 : searchAlgorithm.calculateScore(searchTerm, bookmark);
+			this.bookmarksGrid.options.calculateSearchScore = function(bookmark) {
+				return (searchTerm === "") ? 1 : searchAlgorithm.calculateScore(searchTerm, bookmark);
 			}
 
 			this.bookmarksGrid.renderRows();
 		},
-		openTab: function(event){
+		openTab: function(event) {
 			var $target = $(event.target),
-					url = $target.closest("tr").attr("data-id"),
-					model = window.app.bookmarksCollection.get(url);
+				url = $target.closest("tr").attr("data-id"),
+				model = window.app.bookmarksCollection.get(url);
 
-			if(window.app.settingsModel.get("recordClickThroughs") === true){
+			if (window.app.settingsModel.get("recordClickThroughs") === true) {
 				model.set("clickThroughs", model.get("clickThroughs") + 1);
 			}
 			chrome.tabs.create({
