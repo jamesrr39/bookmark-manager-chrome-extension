@@ -1,5 +1,5 @@
 body{
-	width: 600px;
+	width: 800px;
 	height: 500px;
 }
 .filter{
@@ -20,4 +20,7 @@ body{
 }
 input.search{
 	width: 95%;
+}
+.padded{
+	padding: 15px;
 }

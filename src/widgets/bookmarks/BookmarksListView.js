@@ -2,8 +2,9 @@ define([
 	"text!bookmarks/bookmarksListTemplate.html",
 	"text!bookmarks/bookmarkGridRowTemplate.html",
 	"libs/backbone-grid/src/BackboneGridView",
-	"search/FuzzySearch"
-], function(bookmarksListTemplate, bookmarkGridRowTemplate, BackboneGridView, FuzzySearch) {
+	"search/FuzzySearch",
+	"bookmarks/edit/InlineEditBookmarkView"
+], function(bookmarksListTemplate, bookmarkGridRowTemplate, BackboneGridView, FuzzySearch, InlineEditBookmarkView) {
 	"use strict";
 
 	return Backbone.View.extend({
@@ -57,15 +58,22 @@ define([
 			this.$(".bookmarkSelectorContainer .select2-container").focus();
 		},
 		addBookmark: function() {
+			var self = this;
 			chrome.tabs.query({
 				active: true,
 				lastFocusedWindow: true
 			}, function(tabs) {
-				var tab = tabs[0];
-				window.app.bookmarksCollection.add({
-					url: tab.url,
-					title: tab.title
+				var tab = tabs[0],
+					newBookmarkModel = new window.app.bookmarksCollection.model({
+						url: tab.url,
+						title: tab.title
+					});
+				window.app.bookmarksCollection.add(newBookmarkModel);
+				var inlineEditBookmarkView = new InlineEditBookmarkView({
+					el: self.$(".inlineEditBookmarkContainer").html("<div>").find("div"),
+					model: newBookmarkModel
 				});
+				inlineEditBookmarkView.render();
 			});
 		},
 		search: function(event) {
