@@ -16,22 +16,22 @@ define([
 	"use strict";
 
 	var bookmarksFetched = false,
-		settingsFetched = false,
-		loadUI = function() {
-			if (!bookmarksFetched || !settingsFetched) {
-				return;
-			}
+			settingsFetched = false,
+			loadUI = function() {
+				if (!bookmarksFetched || !settingsFetched) {
+					return;
+				}
 
-			window.app.bookmarksView = new BookmarksListView({
-				el: $("#bookmarksGrid")
-			});
-			window.app.bookmarksView.render();
+				window.app.bookmarksView = new BookmarksListView({
+					el: $("#bookmarksGrid")
+				});
+				window.app.bookmarksView.render();
 
-			window.app.settingsView = new SettingsView({
-				el: $("#settings")
-			});
-			window.app.settingsView.render();
-		};
+				window.app.settingsView = new SettingsView({
+					el: $("#settings")
+				});
+				window.app.settingsView.render();
+			};
 
 	window.app = window.app || {};
 	window.app.bookmarksCollection = new BookmarksCollection();

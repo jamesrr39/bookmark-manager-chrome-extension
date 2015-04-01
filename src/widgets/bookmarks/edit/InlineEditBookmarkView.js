@@ -11,6 +11,16 @@ define([
 		},
 		render: function(){
 			this.$el.html(Mustache.render(inlineEditBookmarkTemplate, this.model.toJSON()));
+			this.labelSelector = this.$(".tags").select2({
+				width: "100%",
+				// todo performance?
+				tags: _.chain(window.app.bookmarksCollection.pluck("folders")).flatten().uniq().map(function(folder){
+					return {
+						id: folder,
+						text: folder
+					};
+				}).value()
+			});
 		},
 		deleteBookmark: function(event){
 			event.preventDefault();
@@ -21,7 +31,8 @@ define([
 			var form = this.$("form")[0];
 			event.preventDefault();
 			window.app.bookmarksCollection.get(this.model).set({
-				title: form.title
+				title: form.title.value,
+				folders: _.pluck(this.labelSelector.select2("data"), "id")
 			});
 			this.destroy();
 		},

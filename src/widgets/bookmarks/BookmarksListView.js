@@ -30,13 +30,14 @@ define([
 						.map(function(model) {
 							var rowClasses = [],
 								url = model.get("url"),
-								title = model.get("title");
+								title = model.get("title"),
+								trimmedTitle = (title.length < 160) ? title : title.substring(0, 160) + "...";
 							return {
 								id: model.id,
 								url: url,
 								trimmedUrl: (url.length < 80) ? url : url.substring(0, 80) + "...",
 								title: title,
-								trimmedTitle: (title.length < 160) ? title : title.substring(0, 160) + "...",
+								trimmedTitle: trimmedTitle,
 								clickThroughs: model.get("clickThroughs"),
 								rowClass: rowClasses.join(" "),
 								folders: model.get("folders"),
