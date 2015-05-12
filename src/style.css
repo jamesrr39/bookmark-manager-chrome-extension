@@ -18,9 +18,19 @@ body{
 	max-height: 450px;
 	overflow: scroll;
 }
-input.search{
+input.search,
+input.filter{
 	width: 95%;
 }
 .padded{
 	padding: 15px;
+}
+.filterSelector{
+	cursor: pointer;
+}
+.filterSelector.selected{
+	background-color: #dedede;
+}
+.inlineEditBookmarkContainer{
+	margin: 10px 0px;
 }

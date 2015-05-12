@@ -55,6 +55,9 @@ define([
 					options.success(list.bookmarks, list.folders, importedBookmarksQty);
 				}
 			});
+		},
+		getAllFolders: function(){
+			return _.chain(window.app.bookmarksCollection.pluck("folders")).flatten().uniq().value();
 		}
 	});
 });

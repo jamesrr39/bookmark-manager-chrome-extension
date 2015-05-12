@@ -47,7 +47,7 @@ define([], function() {
 
 				score += getURLScore(bookmark.url);
 				score += getSearchTermOcurrencesInHaystack(bookmark.title) * weights.searchTermAppearsInTitleOccurence;
-				score += weights.previousClickThroughs * bookmark.clickThroughs;
+//				score += weights.previousClickThroughs * bookmark.clickThroughs;
 				score += _.chain(bookmark.folders)
 					.map(function(folder) {
 						return getSearchTermOcurrencesInHaystack(folder) * weights.searchTermInFolder;

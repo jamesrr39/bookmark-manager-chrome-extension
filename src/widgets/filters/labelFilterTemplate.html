@@ -1,0 +1,16 @@
+<div class="container padded">
+	<h3>Labels</h3>
+	<div class="row">
+		<div class="col-xs-12">
+			<i class="fa fa-fw fa-search"></i>
+			<input class="filter" name="filter" placeholder="Filter by label..." />
+		</div>
+	</div>
+	<div class="row">
+		{{#labels}}
+		<div class="col-xs-3 filterSelector" data-filter-name="{{.}}">
+			{{.}}
+		</div>
+		{{/labels}}
+	</div>
+</div>

@@ -3,8 +3,9 @@ define([
 	"text!bookmarks/bookmarkGridRowTemplate.html",
 	"libs/backbone-grid/src/BackboneGridView",
 	"search/FuzzySearch",
-	"bookmarks/edit/InlineEditBookmarkView"
-], function(bookmarksListTemplate, bookmarkGridRowTemplate, BackboneGridView, FuzzySearch, InlineEditBookmarkView) {
+	"bookmarks/edit/InlineEditBookmarkView",
+	"filters/LabelFilterView"
+], function(bookmarksListTemplate, bookmarkGridRowTemplate, BackboneGridView, FuzzySearch, InlineEditBookmarkView, LabelFilterView) {
 	"use strict";
 
 	return Backbone.View.extend({
@@ -14,6 +15,11 @@ define([
 			"click .openTab": "openTab"
 		},
 		initialize: function() {
+			this.labelFilterView = new LabelFilterView({
+				clickFilterSelector: function(){
+					// todo hide unselected labels
+				}
+			});
 			this.bookmarksGrid = new BackboneGridView({
 				rowTemplate: bookmarkGridRowTemplate,
 				collection: window.app.bookmarksCollection,
@@ -21,11 +27,10 @@ define([
 					return 1;
 				},
 				getHeadings: function() {
-					return [
-					];
+					return [];
 				},
 				getData: function(collection) {
-					var self = this; // BackboneGridView
+					var backboneGridView = this;
 					return _.sortBy(collection
 						.map(function(model) {
 							var rowClasses = [],
@@ -41,7 +46,7 @@ define([
 								clickThroughs: model.get("clickThroughs"),
 								rowClass: rowClasses.join(" "),
 								folders: model.get("folders"),
-								searchScore: self.options.calculateSearchScore(model.toJSON())
+								searchScore: backboneGridView.options.calculateSearchScore(model.toJSON())
 							};
 						})
 						.filter(function(bookmark) {
@@ -55,6 +60,7 @@ define([
 		},
 		render: function() {
 			this.$el.html(bookmarksListTemplate);
+			this.labelFilterView.setElement(this.$(".labelFilterContainer")).render();
 			this.bookmarksGrid.setElement(this.$(".bookmarksGrid")).render();
 			this.$(".bookmarkSelectorContainer .select2-container").focus();
 		},
@@ -65,7 +71,8 @@ define([
 				lastFocusedWindow: true
 			}, function(tabs) {
 				var tab = tabs[0],
-					newBookmarkModel = new window.app.bookmarksCollection.model({
+					existingBookmark = window.app.bookmarksCollection.get(tab.url),
+					newBookmarkModel = !_.isUndefined(existingBookmark) ? existingBookmark : new window.app.bookmarksCollection.model({
 						url: tab.url,
 						title: tab.title
 					});

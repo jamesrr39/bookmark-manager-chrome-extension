@@ -13,13 +13,12 @@ define([
 			this.$el.html(Mustache.render(inlineEditBookmarkTemplate, this.model.toJSON()));
 			this.labelSelector = this.$(".tags").select2({
 				width: "100%",
-				// todo performance?
-				tags: _.chain(window.app.bookmarksCollection.pluck("folders")).flatten().uniq().map(function(folder){
+				tags: _.map(window.app.bookmarksCollection.getAllFolders(), function(label){
 					return {
-						id: folder,
-						text: folder
+						id: label,
+						text: label
 					};
-				}).value()
+				})
 			});
 		},
 		deleteBookmark: function(event){
