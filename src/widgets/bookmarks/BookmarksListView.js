@@ -12,7 +12,9 @@ define([
 		events: {
 			"click .add-bookmark": "addBookmark",
 			"keyup .search": "search",
-			"click .openTab": "openTab"
+			"click .openTab": "openTab",
+			"click .editBookmark": "editBookmark",
+			"click .deleteBookmark": "deleteBookmark"
 		},
 		initialize: function() {
 			var bookmarksListView = this;
@@ -92,6 +94,30 @@ define([
 				});
 				inlineEditBookmarkView.render();
 			});
+		},
+		editBookmark: function(event){
+			event.preventDefault();
+			var self = this,
+				url = $(event.target).closest("tr").attr("data-id"),
+				inlineEditBookmarkView = new InlineEditBookmarkView({
+					el: self.$(".inlineEditBookmarkContainer").html("<div>").find("div"),
+					model: window.app.bookmarksCollection.get(url)
+				});
+			inlineEditBookmarkView.render();
+		},
+		deleteBookmark: function(event){
+			event.preventDefault();
+			var self = this,
+				url = $(event.target).closest("tr").attr("data-id"),
+				bookmark = window.app.bookmarksCollection.get(url),
+				title = bookmark.get("title");
+			if(confirm("Are you sure you want to delete '" + title + "'?")){
+				window.app.bookmarksCollection.remove(bookmark, {
+					success: function(){
+						$.jGrowl("Successfully removed " + title);
+					}
+				});
+			}
 		},
 		search: function(event) {
 			var searchTerm = $(event.target).val(),
