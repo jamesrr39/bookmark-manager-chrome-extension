@@ -15,11 +15,11 @@ define([
 			"click .openTab": "openTab"
 		},
 		initialize: function() {
-			this.labelFilterView = new LabelFilterView({
-				clickFilterSelector: function(){
-					// todo hide unselected labels
-				}
-			});
+			var bookmarksListView = this;
+			this.labelFilterView = new LabelFilterView();
+			this.labelFilterView.model.on("change", function(){
+				this.renderGrid();
+			}, this);
 			this.bookmarksGrid = new BackboneGridView({
 				rowTemplate: bookmarkGridRowTemplate,
 				collection: window.app.bookmarksCollection,
@@ -30,8 +30,14 @@ define([
 					return [];
 				},
 				getData: function(collection) {
-					var backboneGridView = this;
-					return _.sortBy(collection
+					var backboneGridView = this,
+						filterLabels = bookmarksListView.labelFilterView.model.get("labels"),
+						labelFilteredModels = collection.filter(function(model){
+							var noFilter = (filterLabels.length === 0),
+								bookmarkIncludedInFilter = _.intersection(filterLabels, model.get("folders")).length > 0; 
+							return noFilter || bookmarkIncludedInFilter;
+						})
+					return _.chain(labelFilteredModels)
 						.map(function(model) {
 							var rowClasses = [],
 								url = model.get("url"),
@@ -51,18 +57,21 @@ define([
 						})
 						.filter(function(bookmark) {
 							return (bookmark.searchScore >= window.app.settingsModel.get("searchShowThreshold"));
-						}),
-						function(bookmark) {
+						}).sortBy(function(bookmark) {
 							return 1 / bookmark.searchScore;
-						});
+						}).value();
 				}
 			});
 		},
 		render: function() {
 			this.$el.html(bookmarksListTemplate);
 			this.labelFilterView.setElement(this.$(".labelFilterContainer")).render();
-			this.bookmarksGrid.setElement(this.$(".bookmarksGrid")).render();
+			this.bookmarksGrid.setElement(this.$(".bookmarksGrid"));
+			this.renderGrid();
 			this.$(".bookmarkSelectorContainer .select2-container").focus();
+		},
+		renderGrid: function(){
+			this.bookmarksGrid.render();
 		},
 		addBookmark: function() {
 			var self = this;

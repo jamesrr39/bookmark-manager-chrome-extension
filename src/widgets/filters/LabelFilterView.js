@@ -1,7 +1,8 @@
 define([
 	"text!./labelFilterTemplate.html",
-	"libs/mustache/mustache.min"
-], function(labelFilterTemplate, Mustache) {
+	"libs/mustache/mustache.min",
+	"./LabelFilterModel"
+], function(labelFilterTemplate, Mustache, LabelFilterModel) {
 	"use strict";
 	
 	return Backbone.View.extend({
@@ -9,8 +10,8 @@ define([
 			"click .filterSelector": "toggleSelectFilter",
 			"keyup [name='filter']": "filter"
 		},
-		options: {
-			clickFilterSelector: function(){}
+		initialize: function(){
+			this.model = new LabelFilterModel();
 		},
 		render: function(){
 			this.$el.html(Mustache.render(labelFilterTemplate, {
@@ -30,9 +31,16 @@ define([
 			});
 		},
 		toggleSelectFilter: function(event){
-			var $target = $(event.target);
+			var $target = $(event.target),
+				filterName = $target.attr("data-filter-name"),
+				filterLabels = this.model.get("labels");
+			if(_.contains(filterLabels, filterName)){
+				filterLabels.splice(filterLabels.indexOf(filterName), 1);
+			} else {
+				filterLabels.push(filterName);
+			}
+			this.model.trigger("change");
 			$target.toggleClass("selected");
-			this.options.clickFilterSelector(event);
 		}
 	});
 
