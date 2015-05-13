@@ -12,11 +12,19 @@ define([
 		},
 		initialize: function(){
 			this.model = new LabelFilterModel();
+			this.model.on("change", this.highlightSelected, this);
 		},
 		render: function(){
 			this.$el.html(Mustache.render(labelFilterTemplate, {
 				labels: window.app.bookmarksCollection.getAllFolders()
 			}));
+		},
+		highlightSelected: function(){
+			var self = this;
+			this.$(".filterSelector").removeClass("selected");
+			_.each(this.model.get("labels"), function(label){
+				self.$(".filterSelector[data-filter-name='" + label + "']").addClass("selected");
+			});
 		},
 		filter: function(event){
 			var filterTerm = event.target.value;
@@ -40,7 +48,6 @@ define([
 				filterLabels.push(filterName);
 			}
 			this.model.trigger("change");
-			$target.toggleClass("selected");
 		}
 	});
 
